@@ -111,6 +111,8 @@ class _RandomWordsState extends State<RandomWords> {
               ? ListTile.divideTiles(context: context, tiles: tiles).toList()
               : <Widget>[];
 
+          _sorted.clear();
+
           return Scaffold(
             appBar: AppBar(
               title: Text('Saved Suggestions'),
