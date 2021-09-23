@@ -29,6 +29,7 @@ class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _biggerFont = const TextStyle(fontSize: 18.0);
   final _saved = <WordPair>{};
+  final _sorted = <WordPair>[];
 
   Widget _buildSuggestions() {
     return ListView.builder(
@@ -68,21 +69,44 @@ class _RandomWordsState extends State<RandomWords> {
     );
   }
 
+  void _sortSaved() {
+    _sorted.clear();
+
+    List _listSorted = _saved.toList();
+    _listSorted.sort((a, b) {
+      return a.first.toLowerCase().compareTo(b.first.toLowerCase());
+    });
+
+    _listSorted.forEach((wordPair) => _sorted.add(wordPair));
+    _pushSaved();
+  }
+
   void _pushSaved() {
     Navigator.of(context).push(
-      // NEW lines from here...
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          final tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
+          final tiles = _sorted.isNotEmpty
+              ? _sorted.map(
+                  (WordPair pair) {
+                    return ListTile(
+                      title: Text(
+                        pair.asPascalCase,
+                        style: _biggerFont,
+                      ),
+                    );
+                  },
+                )
+              : _saved.map(
+                  (WordPair pair) {
+                    return ListTile(
+                      title: Text(
+                        pair.asPascalCase,
+                        style: _biggerFont,
+                      ),
+                    );
+                  },
+                );
+
           final divided = tiles.isNotEmpty
               ? ListTile.divideTiles(context: context, tiles: tiles).toList()
               : <Widget>[];
@@ -90,11 +114,21 @@ class _RandomWordsState extends State<RandomWords> {
           return Scaffold(
             appBar: AppBar(
               title: Text('Saved Suggestions'),
+              actions: [
+                TextButton(
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  onPressed: _sortSaved,
+                  child: Text('Sort saved'),
+                ),
+              ],
             ),
             body: ListView(children: divided),
           );
         },
-      ), // ...to here.
+      ),
     );
   }
 
