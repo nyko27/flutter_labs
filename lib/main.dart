@@ -82,30 +82,18 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   void _pushSaved() {
+    ListTile selector(WordPair pair) => ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          final tiles = _sorted.isNotEmpty
-              ? _sorted.map(
-                  (WordPair pair) {
-                    return ListTile(
-                      title: Text(
-                        pair.asPascalCase,
-                        style: _biggerFont,
-                      ),
-                    );
-                  },
-                )
-              : _saved.map(
-                  (WordPair pair) {
-                    return ListTile(
-                      title: Text(
-                        pair.asPascalCase,
-                        style: _biggerFont,
-                      ),
-                    );
-                  },
-                );
+          final tiles =
+              _sorted.isNotEmpty ? _sorted.map(selector) : _saved.map(selector);
 
           final divided = tiles.isNotEmpty
               ? ListTile.divideTiles(context: context, tiles: tiles).toList()
